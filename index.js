@@ -98,7 +98,7 @@ async function run() {
         //updateOne
         //updateMany
 
-        app.put('/models/:id', async (req, res) => {
+        app.put('/models/:id',verifyToken ,async (req, res) => {
             const { id } = req.params;
             const data = req.body;
             const objectId = new ObjectId(id);
@@ -163,6 +163,13 @@ async function run() {
             const result = await downloadsCollection.find({ downloaded_by: email }).toArray();
             res.send(result);
         })
+
+        app.get("/search",async (req,res) =>{
+            const search_text = req.query.search;
+            const result = await modelCollection.find({name:{$regex:search_text,$options:"i"}}).toArray();
+            res.send(result);
+        })
+
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
